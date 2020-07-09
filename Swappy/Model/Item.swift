@@ -15,6 +15,7 @@ struct Item {
     var count: Int = 0
     var category: String
     var status: String = Status.AVAILABLE
+    var selected: Bool = false
     
     struct Category {
         static let STOCK = "Stock"

@@ -22,7 +22,8 @@ struct DataManager {
             Constants.FirebaseFirestore.ITEM_OWNER_FIELD : item.owner,
             Constants.FirebaseFirestore.ITEM_CATEGORY_FIELD : item.category,
             Constants.FirebaseFirestore.ITEM_STATUS_FIELD : item.status,
-            Constants.FirebaseFirestore.ITEM_DATE_CREATED_FIELD: Date().timeIntervalSince1970]) { (error) in
+            Constants.FirebaseFirestore.ITEM_DATE_CREATED_FIELD: Date().timeIntervalSince1970,
+            Constants.FirebaseFirestore.ITEM_LAST_UPDATED_FIELD: Date().timeIntervalSince1970]) { (error) in
                 if let e = error {
                     print("There was an issue saving data to firestore: \(e)")//TODO: Alert Issue with Update
                 }
@@ -42,7 +43,22 @@ struct DataManager {
     }
     
     func updateItemInDB(item: Item) {
-        //TODO: Update the item some day.
+        if let id = item.id {
+            db.collection(Constants.FirebaseFirestore.COLLECTION_ITEM).document(id).updateData([
+                Constants.FirebaseFirestore.ITEM_NAME_FIELD : item.name,
+                Constants.FirebaseFirestore.ITEM_COUNT_FIELD : item.count,
+                Constants.FirebaseFirestore.ITEM_OWNER_FIELD : item.owner,
+                Constants.FirebaseFirestore.ITEM_CATEGORY_FIELD : item.category,
+                Constants.FirebaseFirestore.ITEM_STATUS_FIELD : item.status,
+                Constants.FirebaseFirestore.ITEM_LAST_UPDATED_FIELD: Date().timeIntervalSince1970
+            ]) { err in
+                if let err = err {
+                    print("Error updating document: \(err)")
+                } else {
+                    print("Document successfully updated")
+                }
+            }
+        }
     }
     
     mutating func listenForItems(searchCriteria: ItemSearchCriteria, completion: @escaping (_ items: [Item])->Void){
@@ -51,6 +67,10 @@ struct DataManager {
         
         if !searchCriteria.skipOwner {
             query = query.whereField(Constants.FirebaseFirestore.ITEM_OWNER_FIELD, isEqualTo: searchCriteria.owner)
+        }
+        
+        if searchCriteria.filterAvailable {
+            query = query.whereField(Constants.FirebaseFirestore.ITEM_STATUS_FIELD, isEqualTo: Item.Status.AVAILABLE)
         }
         
         query = query.whereField(Constants.FirebaseFirestore.ITEM_CATEGORY_FIELD, isEqualTo: searchCriteria.category)

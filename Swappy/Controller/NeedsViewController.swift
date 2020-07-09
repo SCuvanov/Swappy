@@ -8,6 +8,7 @@
 
 import UIKit
 import FirebaseAuth
+import SwipeCellKit
 
 class NeedsViewController: UIViewController {
     
@@ -23,6 +24,7 @@ class NeedsViewController: UIViewController {
         super.viewDidLoad()
         
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(UINib(nibName: Constants.Cell.ITEM_CELL_NIB_NAME, bundle: nil), forCellReuseIdentifier: Constants.Cell.CELL_IDENTIFIER)
         
         searchBar.delegate = self
@@ -50,9 +52,7 @@ class NeedsViewController: UIViewController {
         dataManager.listenForItems(searchCriteria: itemSearchCriteria) { (items) in
             self.items = items
             self.tempItems = items
-            
-            print(items)
-            
+                        
             DispatchQueue.main.async {
                 self.tableView.reloadData()
                 self.searchBar.resignFirstResponder()
@@ -66,6 +66,48 @@ class NeedsViewController: UIViewController {
         }
     }
     
+    func delete(at indexPath: IndexPath) {
+        let item = self.items[indexPath.row]
+        
+        self.items.remove(at: indexPath.row)
+        dataManager.removeItemFromDB(item: item)
+    }
+    
+    func update(item: Item) {
+        dataManager.updateItemInDB(item: item)
+    }
+    
+    func edit(at indexPath: IndexPath) {
+        var nameTextField = UITextField()
+        var countTextField = UITextField()
+        
+        let alert = UIAlertController(title: "Edit Item", message: "Enter the details to edit an Item you have in your stock.", preferredStyle: .alert)
+        
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Name"
+            nameTextField = alertTextField
+        }
+        
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Count"
+            countTextField = alertTextField
+        }
+        
+        let action = UIAlertAction(title: "Submit", style: .default) { (action) in
+            if let name = nameTextField.text, let count = Int(countTextField.text!) {
+                var item = self.items[indexPath.row]
+                
+                item.name = name
+                item.count = count
+                
+                self.update(item: item)
+            }
+        }
+        
+        alert.addAction(action)
+        
+        present(alert, animated: true, completion: nil)
+    }
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
         var nameTextField = UITextField()
@@ -135,10 +177,49 @@ extension NeedsViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let item = items[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cell.CELL_IDENTIFIER, for: indexPath) as! ItemTableViewCell
+        cell.delegate = self
         
         cell.nameLabel.text = item.name
         cell.countLabel.text = String(item.count)
+        cell.statusStackView.isHidden = true
         
         return cell
+    }
+}
+
+extension NeedsViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+         let cell = self.tableView.cellForRow(at: indexPath) as! ItemTableViewCell
+         cell.showSwipe(orientation: .right, animated: true, completion: nil)
+    }
+}
+
+extension NeedsViewController: SwipeTableViewCellDelegate {
+    
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+        guard orientation == .right else { return nil }
+
+        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
+            self.delete(at: indexPath)
+        }
+        
+        let editAction = SwipeAction(style: .default, title: "Edit") { action, indexPath in
+            self.edit(at: indexPath)
+        }
+
+        // customize the action appearance
+        deleteAction.image = UIImage(systemName: "trash")
+        
+        editAction.image = UIImage(systemName: "pencil")
+        editAction.backgroundColor = .systemBlue
+        
+        return [deleteAction, editAction]
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+        var options = SwipeOptions()
+        options.transitionStyle = .border
+        options.expansionStyle = .none
+        return options
     }
 }

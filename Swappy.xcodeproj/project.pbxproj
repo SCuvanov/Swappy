@@ -20,6 +20,8 @@
 		B93D95EF2443A6BB005D8F77 /* Trade.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93D95EE2443A6BB005D8F77 /* Trade.swift */; };
 		B93D95F224464167005D8F77 /* TradeTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B93D95F024464167005D8F77 /* TradeTableViewCell.swift */; };
 		B93D95F324464167005D8F77 /* TradeTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = B93D95F124464167005D8F77 /* TradeTableViewCell.xib */; };
+		B98DC460244AA0D6009FA3D8 /* SwapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B98DC45F244AA0D6009FA3D8 /* SwapViewController.swift */; };
+		B9A4C25724709B1F00E875E3 /* ItemSelectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9A4C25624709B1F00E875E3 /* ItemSelectionViewController.swift */; };
 		B9F0DF2E243B86F6008D0858 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F0DF2D243B86F6008D0858 /* AppDelegate.swift */; };
 		B9F0DF30243B86F6008D0858 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F0DF2F243B86F6008D0858 /* SceneDelegate.swift */; };
 		B9F0DF32243B86F6008D0858 /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9F0DF31243B86F6008D0858 /* WelcomeViewController.swift */; };
@@ -47,6 +49,8 @@
 		B93D95EE2443A6BB005D8F77 /* Trade.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Trade.swift; sourceTree = "<group>"; };
 		B93D95F024464167005D8F77 /* TradeTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TradeTableViewCell.swift; sourceTree = "<group>"; };
 		B93D95F124464167005D8F77 /* TradeTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TradeTableViewCell.xib; sourceTree = "<group>"; };
+		B98DC45F244AA0D6009FA3D8 /* SwapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwapViewController.swift; sourceTree = "<group>"; };
+		B9A4C25624709B1F00E875E3 /* ItemSelectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemSelectionViewController.swift; sourceTree = "<group>"; };
 		B9F0DF2A243B86F6008D0858 /* Swappy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Swappy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B9F0DF2D243B86F6008D0858 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B9F0DF2F243B86F6008D0858 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -138,6 +142,8 @@
 				B93D95EA2442BAB3005D8F77 /* FeedViewController.swift */,
 				B93D95EC2443A4D7005D8F77 /* TradesViewController.swift */,
 				B93D95F024464167005D8F77 /* TradeTableViewCell.swift */,
+				B98DC45F244AA0D6009FA3D8 /* SwapViewController.swift */,
+				B9A4C25624709B1F00E875E3 /* ItemSelectionViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -289,9 +295,11 @@
 				B93D95EF2443A6BB005D8F77 /* Trade.swift in Sources */,
 				B93D95F224464167005D8F77 /* TradeTableViewCell.swift in Sources */,
 				B9F0DF4B243B90A2008D0858 /* RegisterViewController.swift in Sources */,
+				B9A4C25724709B1F00E875E3 /* ItemSelectionViewController.swift in Sources */,
 				B9F0DF32243B86F6008D0858 /* WelcomeViewController.swift in Sources */,
 				B91EEAEE243CC733004B5E55 /* TabBarViewController.swift in Sources */,
 				B91EEAEC243CC4CD004B5E55 /* Item.swift in Sources */,
+				B98DC460244AA0D6009FA3D8 /* SwapViewController.swift in Sources */,
 				B9F0DF2E243B86F6008D0858 /* AppDelegate.swift in Sources */,
 				B932A6E4243F877F0059C9E6 /* DataManager.swift in Sources */,
 				B91EEAF6243CDAEA004B5E55 /* NeedsViewController.swift in Sources */,

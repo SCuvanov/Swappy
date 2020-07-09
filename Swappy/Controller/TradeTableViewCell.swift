@@ -20,7 +20,4 @@ class TradeTableViewCell: SwipeTableViewCell {
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {}
-
-    @IBAction func tradeButtonPressed(_ sender: UIButton) {
-    }
 }

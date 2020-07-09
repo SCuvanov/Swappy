@@ -8,12 +8,14 @@
 
 import UIKit
 import FirebaseAuth
+import SwipeCellKit
 
 class FeedViewController: UIViewController {
     
     var dataManager = DataManager()
     var items: [Item] = []
     var tempItems: [Item] = []
+    var selectedItem: Item?
     
     @IBOutlet var navigationBar: UINavigationBar!
     @IBOutlet weak var searchBar: UISearchBar!
@@ -23,6 +25,7 @@ class FeedViewController: UIViewController {
         super.viewDidLoad()
         
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(UINib(nibName: Constants.Cell.ITEM_CELL_NIB_NAME, bundle: nil), forCellReuseIdentifier: Constants.Cell.CELL_IDENTIFIER)
         
         searchBar.delegate = self
@@ -45,7 +48,7 @@ class FeedViewController: UIViewController {
     
     func listenForItems() {
         
-        let itemSearchCriteria = ItemSearchCriteria(owner: (Auth.auth().currentUser?.uid)!, category: Item.Category.STOCK, skipOwner: true)
+        let itemSearchCriteria = ItemSearchCriteria(owner: (Auth.auth().currentUser?.uid)!, category: Item.Category.STOCK, skipOwner: true, filterAvailable: true)
         
         dataManager.listenForItems(searchCriteria: itemSearchCriteria) { (items) in
             self.items = items
@@ -61,6 +64,18 @@ class FeedViewController: UIViewController {
                     self.tableView.scrollToRow(at: indexPath, at: .top, animated: true)
                 }
             }
+        }
+    }
+    
+    func swap(selectedItem: Item) {
+        self.selectedItem = selectedItem
+        self.performSegue(withIdentifier: Constants.Segue.FEED_TO_CREATE_TRADE, sender: self)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == Constants.Segue.FEED_TO_CREATE_TRADE {
+            let destinationVC = segue.destination as! SwapViewController
+            destinationVC.selectedItem = selectedItem
         }
     }
 }
@@ -100,12 +115,44 @@ extension FeedViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let item = items[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cell.CELL_IDENTIFIER, for: indexPath) as! ItemTableViewCell
+        cell.delegate = self
         
         cell.nameLabel.text = item.name
         cell.countLabel.text = String(item.count)
+        cell.statusStackView.isHidden = true
         
         return cell
     }
+}
+
+extension FeedViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+         let cell = self.tableView.cellForRow(at: indexPath) as! ItemTableViewCell
+         cell.showSwipe(orientation: .right, animated: true, completion: nil)
+    }
+}
+
+extension FeedViewController: SwipeTableViewCellDelegate {
     
-    //TODO: Add something which allows you to click on a tile, perhaps a button on the tile and then open a trade.
+    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
+        guard orientation == .right else { return nil }
+        
+        let item = self.items[indexPath.row]
+        
+        let swapAction = SwipeAction(style: .default, title: "Swap") { action, indexPath in
+            self.swap(selectedItem: item)
+        }
+
+        swapAction.image = UIImage(systemName: "arrow.swap")
+        swapAction.backgroundColor = .systemBlue
+        
+        return [swapAction]
+    }
+    
+    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
+        var options = SwipeOptions()
+        options.transitionStyle = .border
+        options.expansionStyle = .none
+        return options
+    }
 }

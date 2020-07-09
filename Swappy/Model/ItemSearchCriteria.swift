@@ -12,4 +12,5 @@ struct ItemSearchCriteria {
     var owner: String
     var category: String
     var skipOwner: Bool = false
+    var filterAvailable: Bool = false
 }

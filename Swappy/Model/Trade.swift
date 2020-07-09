@@ -9,7 +9,6 @@
 import Foundation
 
 struct Trade {
-    var isActive: Bool = false
     var itemsToTrade: [Item]
     var itemsToReceive: [Item]
     var proposingOwner: String

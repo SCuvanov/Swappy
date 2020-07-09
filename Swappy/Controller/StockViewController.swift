@@ -24,6 +24,8 @@ class StockViewController: UIViewController {
         super.viewDidLoad()
         
         tableView.dataSource = self
+        tableView.delegate = self
+        tableView.allowsSelection = true
         tableView.register(UINib(nibName: Constants.Cell.ITEM_CELL_NIB_NAME, bundle: nil), forCellReuseIdentifier: Constants.Cell.CELL_IDENTIFIER)
         
         searchBar.delegate = self
@@ -70,6 +72,42 @@ class StockViewController: UIViewController {
         
         self.items.remove(at: indexPath.row)
         dataManager.removeItemFromDB(item: item)
+    }
+    
+    func update(item: Item) {
+        dataManager.updateItemInDB(item: item)
+    }
+    
+    func edit(at indexPath: IndexPath) {
+        var nameTextField = UITextField()
+        var countTextField = UITextField()
+        
+        let alert = UIAlertController(title: "Edit Item", message: "Enter the details to edit an Item you have in your stock.", preferredStyle: .alert)
+        
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Name"
+            nameTextField = alertTextField
+        }
+        
+        alert.addTextField { (alertTextField) in
+            alertTextField.placeholder = "Count"
+            countTextField = alertTextField
+        }
+        
+        let action = UIAlertAction(title: "Submit", style: .default) { (action) in
+            if let name = nameTextField.text, let count = Int(countTextField.text!) {
+                var item = self.items[indexPath.row]
+                
+                item.name = name
+                item.count = count
+                
+                self.update(item: item)
+            }
+        }
+        
+        alert.addAction(action)
+        
+        present(alert, animated: true, completion: nil)
     }
     
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -140,6 +178,7 @@ extension StockViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let item = items[indexPath.row]
         let cell = tableView.dequeueReusableCell(withIdentifier: Constants.Cell.CELL_IDENTIFIER, for: indexPath) as! ItemTableViewCell
+
         
         cell.delegate = self
         
@@ -152,27 +191,46 @@ extension StockViewController: UITableViewDataSource {
     }
 }
 
+extension StockViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+         let cell = self.tableView.cellForRow(at: indexPath) as! ItemTableViewCell
+         cell.showSwipe(orientation: .right, animated: true, completion: nil)
+    }
+}
+
 extension StockViewController: SwipeTableViewCellDelegate {
     
     func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> [SwipeAction]? {
         guard orientation == .right else { return nil }
+        
+        var item = self.items[indexPath.row]
 
         let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
             self.delete(at: indexPath)
         }
         
-        let status = self.items[indexPath.row].status == Item.Status.AVAILABLE ? Item.Status.UNAVAILABLE : Item.Status.AVAILABLE
+        let status = item.status == Item.Status.AVAILABLE ? Item.Status.UNAVAILABLE : Item.Status.AVAILABLE
+        item.status = status
         
         let toggleStatusAction = SwipeAction(style: .default, title: status) { action, indexPath in
-            //TODO: Toggle Status, Update Database, Update Row
+            self.update(item: item)
+        }
+        
+        let editAction = SwipeAction(style: .default, title: "Edit") { action, indexPath in
+            self.edit(at: indexPath)
         }
 
         // customize the action appearance
         deleteAction.image = UIImage(systemName: "trash")
+        
         toggleStatusAction.image = status == Item.Status.AVAILABLE ? UIImage(systemName: "tray.and.arrow.down.fill") : UIImage(systemName: "tray.and.arrow.up.fill")
         toggleStatusAction.backgroundColor = status == Item.Status.AVAILABLE ? .systemGreen : .systemYellow
         
-        return [deleteAction, toggleStatusAction]
+        editAction.image = UIImage(systemName: "pencil")
+        editAction.backgroundColor = .systemBlue
+        
+        
+        return [deleteAction, toggleStatusAction, editAction]
     }
     
     func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {

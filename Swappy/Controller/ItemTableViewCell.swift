@@ -17,6 +17,8 @@ class ItemTableViewCell: SwipeTableViewCell {
     @IBOutlet weak var statusImageView: UIImageView!
     @IBOutlet weak var statusLabel: UILabel!
     
+    @IBOutlet var statusStackView: UIStackView!
+    
     override func awakeFromNib() {
         super.awakeFromNib()
     }

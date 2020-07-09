@@ -19,6 +19,8 @@ struct Constants {
         static let LOGIN_TO_MAIN = "LoginToMain"
         static let LOGIN_TO_REGISTER = "LoginToRegister"
         static let REGISTER_TO_MAIN = "RegisterToMain"
+        static let FEED_TO_CREATE_TRADE = "FeedToCreateTrade"
+        static let CREATE_TRADE_TO_ITEM_SELECTION = "CreateTradeToItemSelection"
     }
     
     struct FirebaseErrorCodes {
@@ -32,6 +34,7 @@ struct Constants {
         static let ITEM_NAME_FIELD = "name"
         static let ITEM_COUNT_FIELD = "count"
         static let ITEM_DATE_CREATED_FIELD = "date_created"
+        static let ITEM_LAST_UPDATED_FIELD = "last_updated"
         static let ITEM_OWNER_FIELD = "owner"
         static let ITEM_CATEGORY_FIELD = "category"
         static let ITEM_STATUS_FIELD = "status"
